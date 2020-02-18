@@ -1,0 +1,21 @@
+{
+  "name": "sip2-rest",
+  "version": "1.0.0",
+  "keywords": [
+    "util",
+    "functional",
+    "server",
+    "client",
+    "browser"
+  ],
+  "author": "jan",
+  "contributors": [],
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-schedule": "^1.3.2",
+    "sip2": "git+https://github.com/janosch12345/node-sip2.git"
+  },
+  "scripts": {
+    "start": "nodemon server.js"
+  }
+}
