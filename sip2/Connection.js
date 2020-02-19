@@ -85,7 +85,8 @@ class Connection {
         //clearTimeout(this.responseTimeoutTimer);
       
       //  callback 
-      this.onResponse("socket closed", null); 
+      if (this.onResponse)
+        this.onResponse("socket closed", null); 
             
       // tell connection manager that a connection closed
       this.onError(this,"closed");
