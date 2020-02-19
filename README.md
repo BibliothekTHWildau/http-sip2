@@ -16,6 +16,8 @@ F.e. put the application behind a reverse proxy (apache or nginx running under h
 - Rename `_config.js` to `config.js` and enter your sip2 configuration.
 - Testconnections from config.js are used when node is running in development mode.
 
+A systemd service file is included in `system/`
+
 ## Startup
 
   node server.js
@@ -50,4 +52,4 @@ Not all sip requests are included as routes yet, but simple to be integrated whe
 
 It is possible to add a middleware in order to bundle certain sip2 requests in order to build complex responses e.g. return a patron account including all items. 
 
-An example called unidos is included but commented out in server.js. To enable it simply remove the comments 
+An example called unidos is included and triggered via config.js. To enable it set `unidos : true`

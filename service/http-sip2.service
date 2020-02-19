@@ -1,0 +1,19 @@
+[Unit]
+Description=node http-sip2 deamon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /path/to/http-sip2/server.js
+ExecStop=/bin/kill -9 $MAINPID
+Restart=always
+RestartSec=10
+# Restart service after 10 seconds if node service crashes
+StandardOutput=file:/path/to/http-sip2/logs/http-sip2.log
+StandardError=file:/path/to/http-sip2/logs/http-sip2-err.log
+User=user
+Group=user
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
