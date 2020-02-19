@@ -6,8 +6,6 @@ var express = require('express'),
         app = express(),
         port = process.env.PORT || 3000;
 
-//const unidosRouter = require('./routes/unidos');
-//const systemRouter = require('./routes/system');
 const sip2Router = require('./routes/sip2');
 
 // sip2 service
@@ -23,15 +21,24 @@ const sip2Service = new SIP2SERVICE((err) => {
 });
 
 // Downtime management
+const Downtime = require('./sip2/Downtime');
 if (config.sip2.downtime){
-  //const Downtime = require('./sip2/Downtime');
-  //Downtime.init();
+  
+  Downtime.init();
 }
+
+const clientIsAllowed = function(req, res, next) {
+  // restrict to allowed clients from list
+  // auth is done by reverse proxy
+  if (config.allowedClients.indexOf(req.connection.remoteAddress) > -1)
+    return next()
+  else 
+    return res.status(403).send("forbidden");
+}
+app.use(clientIsAllowed);
 
 if (process.env.NODE_ENV !== 'production'){
   const allowCrossDomain = function(req, res, next) {
-    var ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
-    console.log("IP: " + ip)
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', '*');
     res.header('Access-Control-Allow-Headers', '*');
@@ -42,29 +49,42 @@ if (process.env.NODE_ENV !== 'production'){
 }
 
 // unidos middleware
-/*const Unidos = require('./unidos/UnidosService');
-const uni = new Unidos(sip2Service,(err)=>{
+var Unidos, uni;
+if (config.unidos){
+  Unidos = require('./unidos/UnidosService');
+  uni = new Unidos(sip2Service,(err)=>{
   if (err){
     console.log(` )-: it seems that UnidosService is not starting properly.`);
     console.log(err);
     process.exit();
   }
 });
-*/
+}
 
 // before: app.use(app.router);
 app.use(function (req, res, next) {
-  console.log(req.headers['x-forwarded-for'],req.connection.remoteAddress)
+  res.set({ 'content-type': 'application/json; charset=utf-8' });
+  if (Downtime.isDowntime){
+    
+    return res.status(503).json({ msgType : "response", response : "Dieser Dienst steht ab " + Downtime.downTimeEnds + " wieder zur Verfügung. Bitte versuchen sie es dann noch einmal.", isComplete: true });
+  }
+            
   req.sip2 = sip2Service;
   // unidos middleware
-//  req.uni = uni;
-  res.set({ 'content-type': 'application/json; charset=utf-8' });
+  if (config.unidos){
+    req.uni = uni;
+  }  
+  
   next();
 });
 
 // unidos middleware
-//app.use('/unidos', unidosRouter);
-//app.use('/system', systemRouter);
+if (config.unidos){
+  const unidosRouter = require('./routes/unidos');
+  const systemRouter = require('./routes/system');
+  app.use('/unidos', unidosRouter);
+  app.use('/system', systemRouter);
+}
 app.use('/sip2', sip2Router);
 
 // catch 404 and forward to error handler
