@@ -49,17 +49,17 @@ if (process.env.NODE_ENV !== 'production'){
 }
 
 // unidos middleware
-const uni = config.unidos ? function(){
+var uni;
+if (config.unidos){
   const Unidos = require('./unidos/UnidosService');
-  let uni = new Unidos(sip2Service,(err)=>{
+  uni = new Unidos(sip2Service,(err)=>{
   if (err){
     console.log(` )-: it seems that UnidosService is not starting properly.`);
     console.log(err);
     process.exit();
   }
-  return uni;
-  });
-} : false;
+});
+}
 
 // before: app.use(app.router);
 app.use(function (req, res, next) {
