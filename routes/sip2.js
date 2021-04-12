@@ -3,6 +3,14 @@ var express = require('express');
 var router = express.Router();
 var Helpers = require('../Helpers');
 
+router.get('/scstatus', function(req, res, next) {
+   
+  req.sip2.handle({"type":"scStatus" })
+  .then( (scstatus) => {res.send(scstatus) })
+  .catch( err => res.status(500).send(err) );
+  
+});
+
 router.get('/itemInformation/:itemIdentifier', function(req, res, next) {
   
   if (!Helpers.isItemId(req.params.itemIdentifier))
