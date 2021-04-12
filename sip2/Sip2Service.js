@@ -56,6 +56,8 @@ class Sip2Handler { //die main starten
         case "renewAll" :     temp = this.requestRenewAll(request.patronId); break;
         case "checkout" :     temp = this.requestCheckout(config.sip2.renewViaCheckoutAllowed, request.patronId, request.itemIdentifier, request.noBlock, request.nbDueDate); break;
         case "checkin"  :   temp = this.requestCheckin(request.itemIdentifier, request.noBlock, request.nbDueDate, request.highPriority); break;
+
+        case "hold" :     temp = this.requestHold(request.patronId ,'+' ,2 ,request.itemIdentifier ,'' ,'' ,null, null, request.highPriority); break;
       }
 
       temp.then( responseString => {
@@ -155,7 +157,49 @@ class Sip2Handler { //die main starten
       }, highPriority);
     })
   }
+
   
+ /**
+  * 
+  * @param {*} patronId 
+  * @param {*} holdMode 
+  * @param {*} holdType 
+  * @param {*} itemIdentifier 
+  * @param {*} titleIdentifier 
+  * @param {*} pickupLocation 
+  * @param {*} feeAcknowledged 
+  * @param {*} expirationDate 
+  * @param {*} highPriority 
+  * @returns 
+  */
+  requestHold(patronId, holdMode, holdType, itemIdentifier, titleIdentifier = '', pickupLocation ='',feeAcknowledged, expirationDate = '                  ', highPriority = false) {
+    
+    return new Promise((resolve, reject) => {
+      
+      // 15<hold mode><transaction date><expiration date><pickup location><hold type><institution id><patron identifier><patron password><item identifier><title identifier><terminal password><fee acknowledged> 
+
+      // mode 1-char, fixed-length required field  '+'/'-'/'*'  Add, delete, change 
+      // hold type     BY     1-char, fixed-length field (1 thru 9).  The type of hold:
+      //    Value   HoldType
+      //      1     other     
+      //      2     any copy of a title     
+      //      3     a specific copy of a title     
+      //      4     any copy at a single branch or sublocation
+      // expiration date      BW    18-char, fixed-length field:  YYYYMMDDZZZZHHMMSS; the date, if any, that the hold will expire.
+      // pickup location     BS      variable-length field; the location where an item will be picked up. 
+      
+      const holdRequest = new SIP2.HoldRequest(holdMode, holdType, itemIdentifier,titleIdentifier,pickupLocation,null);
+      holdRequest.patronIdentifier = patronId;
+      
+      this.sip2Connection.send(holdRequest.getMessage(), (err, holdResponse) => {
+        if (err)
+          return reject();
+        return resolve(holdResponse);
+      }, highPriority);
+    })
+  }
+
+
   requestRenew(patronId, itemIdentifier, noBlock = false, nbDueDate = false, highPriority = false) {
     //console.log("params:", patronId, itemIdentifier, noBlock, nbDueDate, highPriority );
     // either send a renew request or send a checkout request with scRenewalPolicy = true

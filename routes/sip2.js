@@ -77,4 +77,16 @@ router.get('/checkin/:itemIdentifier', function(req, res, next) {
 });
 
 
+router.get('/hold/:patronIdentifier/:itemIdentifier', function(req, res, next) {
+  
+  if (!Helpers.isPatronId(req.params.patronIdentifier) || !Helpers.isItemId(req.params.itemIdentifier))
+    return next();
+  
+  
+  req.sip2.handle({"type":"hold", "patronId":req.params.patronIdentifier, "itemIdentifier" :  req.params.itemIdentifier})
+  .then( (patron) => {res.send(patron) })
+  .catch( err => res.status(500).send(err) );
+});
+
+
 module.exports = router;
