@@ -3,6 +3,7 @@
 module.exports = {
     sip2 : {
       encoding: 'latin1',
+      institution: 'AOinstitution',
       renewViaCheckoutAllowed : true,
       partialResponse: 20,
       maxReconnectionAttempts : 5,

@@ -2,6 +2,7 @@
 
 const SIP2 = require('sip2');
 const config = require('../config');
+const INSTITUTION = config.sip2.institution;
 const ConnectionManager = require('./ConnectionManager');
 const parseResponse = require('../node_modules/sip2/lib/parseResponse');
 
@@ -50,8 +51,7 @@ class Sip2Handler { //die main starten
         case "patronStatus":  temp = this.requestPatronStatus(request.patronId); break;
         case "itemInformation" :     temp = this.requestItemInformation(request.itemIdentifier); break;
         case "renew" :        temp = this.requestRenew(request.patronId, request.itemIdentifier, request.noBlock, request.nbDueDate, request.highPriority); break; 
-
-        // renew over checkout - if commenting in check params
+        // renew via checkout - if commenting in check params
         //case "renew" :        temp = this.requestCheckout(config.sip2.renewViaCheckoutAllowed, request.patronId, request.itemIdentifier, request.highPriority); break;
         case "renewAll" :     temp = this.requestRenewAll(request.patronId); break;
         case "checkout" :     temp = this.requestCheckout(config.sip2.renewViaCheckoutAllowed, request.patronId, request.itemIdentifier, request.noBlock, request.nbDueDate); break;
@@ -89,7 +89,7 @@ class Sip2Handler { //die main starten
       //const type = 'charged';
       const patronInformationRequest = new SIP2.PatronInformationRequest(type, 1, 2);
       //patronInformationRequest.sequence = 1;
-      patronInformationRequest.institutionId = 'THW';
+      patronInformationRequest.institutionId = INSTITUTION;
       patronInformationRequest.patronIdentifier = patronId;
       //console.log(patronInformationRequest.getMessage())
       this.sip2Connection.send(patronInformationRequest.getMessage(), (err, patronInformationResponse) => {
@@ -107,7 +107,7 @@ class Sip2Handler { //die main starten
     return new Promise((resolve, reject) => {
 
       const patronStatusRequest = new SIP2.PatronStatusRequest();
-      patronStatusRequest.institutionId = 'THW';
+      patronStatusRequest.institutionId = INSTITUTION;
       patronStatusRequest.patronIdentifier = patronId;
       //console.log(patronInformationRequest.getMessage())
       this.sip2Connection.send(patronStatusRequest.getMessage(), (err, patronStatusResponse) => {
@@ -125,8 +125,8 @@ class Sip2Handler { //die main starten
     return new Promise((resolve, reject) => {
       // Patron information request
       const itemInformationRequest = new SIP2.ItemInformationRequest(itemIdentifier);
-
-      //console.log(itemInformationRequest.getMessage())
+      itemInformationRequest.institutionId = INSTITUTION;
+      console.log(itemInformationRequest.getMessage(),INSTITUTION)
       this.sip2Connection.send(itemInformationRequest.getMessage(), (err, itemInformationResponse) => {
         if (err)
           return reject();
@@ -149,6 +149,7 @@ class Sip2Handler { //die main starten
       // scRenewalPolicy, nbDueDate, itemIdentifier, itemProperties, feeAcknowledged, noBlock = false
       const checkoutRequest = new SIP2.CheckoutRequest(scRenewalPolicy, nbDueDate ,itemIdentifier, null, null, noBlock);
       checkoutRequest.patronIdentifier = patronId;
+      checkoutRequest.institutionId = INSTITUTION;
       //console.log(itemInformationRequest.getMessage())
       this.sip2Connection.send(checkoutRequest.getMessage(), (err, checkoutResponse) => {
         if (err)
@@ -190,7 +191,7 @@ class Sip2Handler { //die main starten
       
       const holdRequest = new SIP2.HoldRequest(holdMode, holdType, itemIdentifier,titleIdentifier,pickupLocation,null);
       holdRequest.patronIdentifier = patronId;
-      
+      holdRequest.institutionId = INSTITUTION;
       this.sip2Connection.send(holdRequest.getMessage(), (err, holdResponse) => {
         if (err)
           return reject();

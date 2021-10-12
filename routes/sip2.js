@@ -39,27 +39,27 @@ router.get('/patronInformation/:patronIdentifier/:itemType?', function(req, res,
 
 // the following params can be set but have no use in our server 
 // "noBlock" : noBlock, "nbDueDate" : nbDueDate
-router.get('/renew/:patronIdentifier/:itemIdentifier', function(req, res, next) {
+router.get('/renew/:patronIdentifier/:itemIdentifier/:nbDueDate?', function(req, res, next) {
   
   if (!Helpers.isPatronId(req.params.patronIdentifier) || !Helpers.isItemId(req.params.itemIdentifier))
     return next();
   
   // {type: "renew", patronId: request.patronId, itemIdentifier: request.itemIdentifier, noBlock : request.noBlock, nbDueDate : request.nbDueDate }
   // toDO
-  req.sip2.handle({"type":"renew", "patronId":req.params.patronIdentifier, "itemIdentifier" :  req.params.itemIdentifier})
+  req.sip2.handle({"type":"renew", "patronId":req.params.patronIdentifier, "itemIdentifier" :  req.params.itemIdentifier, "nbDueDate" : req.params.nbDueDate, "noBlock" : req.params.nbDueDate ? true : false })
   .then( (patron) => {res.send(patron) })
   .catch( err => res.status(500).send(err) );
 });
 
 
-router.get('/checkout/:patronIdentifier/:itemIdentifier', function(req, res, next) {
+router.get('/checkout/:patronIdentifier/:itemIdentifier/:nbDueDate?', function(req, res, next) {
   
   if (!Helpers.isPatronId(req.params.patronIdentifier) || !Helpers.isItemId(req.params.itemIdentifier))
     return next();
   
   // {type: "checkout", patronId: request.patronId, itemIdentifier: request.itemIdentifier, noBlock : request.noBlock, nbDueDate : request.nbDueDate }
   // TODO
-  req.sip2.handle({"type":"checkout", "patronId":req.params.patronIdentifier, "itemIdentifier" :  req.params.itemIdentifier})
+  req.sip2.handle({"type":"checkout", "patronId":req.params.patronIdentifier, "itemIdentifier" :  req.params.itemIdentifier, "nbDueDate" : req.params.nbDueDate, "noBlock" : req.params.nbDueDate ? true : false })
   .then( (patron) => {res.send(patron) })
   .catch( err => res.status(500).send(err) );
 });
