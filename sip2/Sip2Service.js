@@ -234,12 +234,12 @@ class Sip2Handler { //die main starten
     })      
   }  
 
-   requestCheckin(itemIdentifier, noBlock = false, nbDueDate = null, highPriority = false) {
+  requestCheckin(itemIdentifier, noBlock = false, nbDueDate = null, highPriority = false) {
     
     return new Promise((resolve, reject) => {
       // returnDate, location, itemIdentifier, itemProperties
-      const checkinRequest = new SIP2.CheckinRequest(null, "sip2rest" ,itemIdentifier, null);
-      
+      const checkinRequest = new SIP2.CheckinRequest(null, "hsbwildau" ,itemIdentifier, null);
+      checkinRequest.institutionId = INSTITUTION;
       console.log(checkinRequest.getMessage())
       this.sip2Connection.send(checkinRequest.getMessage(), (err, checkinResponse) => {
         if (err)

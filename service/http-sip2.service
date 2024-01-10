@@ -3,17 +3,20 @@ Description=node http-sip2 deamon
 After=network.target
 
 [Service]
+#Environment=APPFOLDER=/path/to/app
+Environment=APPFOLDER=/home/jan/node/http-sip2_koha PORT=3001 NODE_ENV=production
 Type=simple
-ExecStart=/usr/bin/node /path/to/http-sip2/server.js
+ExecStart=/usr/bin/node ${APPFOLDER}/server.js
 ExecStop=/bin/kill -9 $MAINPID
 Restart=always
 RestartSec=10
 # Restart service after 10 seconds if node service crashes
-StandardOutput=file:/path/to/http-sip2/logs/http-sip2.log
-StandardError=file:/path/to/http-sip2/logs/http-sip2-err.log
-User=user
-Group=user
-Environment=NODE_ENV=production
+#StandardOutput=file:/path/to/http-sip2/logs/http-sip2.log
+#StandardError=file:/path/to/http-sip2/logs/http-sip2-err.log
+StandardOutput=append:${APPFOLDER}/logs/http-sip2.log
+StandardError=append:${APPFOLDER}/logs/http-sip2-err.log
+User=jan
+Group=jan
 
 [Install]
 WantedBy=multi-user.target
