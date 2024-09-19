@@ -274,7 +274,7 @@ class Sip2Handler { //die main starten
       let feeIdentifier = "AB";// accountlines "FEEID"; SIP2:CG
       let transactionId = "TRANSACTIONID"; // SIP2:BK
 
-      // 3720240422    141805FTPTEURBV0,01|AOHSBWILDAU|AA20000066220|CGFEEID|BKTRANSACTIONID|AY0AZE8E5
+      // 3720240422    141805FTPTEURBV0,01|AOLOCATION|AAPATRONID|CGFEEID|BKTRANSACTIONID|AY0AZE8E5
 
       const FeePaidRequest = new SIP2.FeePaidRequest(feeType, paymentType, currencyType, req.feeAmount, feeIdentifier, transactionId);
       FeePaidRequest.patronIdentifier = req.patronId;
