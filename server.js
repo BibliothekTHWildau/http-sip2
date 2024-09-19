@@ -6,6 +6,8 @@ var express = require('express'),
         app = express(),
         port = process.env.PORT || 3000;
 
+app.use(express.json());
+
 const sip2Router = require('./routes/sip2');
 
 // sip2 service
@@ -42,6 +44,15 @@ if (process.env.NODE_ENV !== 'production'){
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', '*');
     res.header('Access-Control-Allow-Headers', '*');
+    res.header('content-type','text/html; charset=UTF-8');
+    next();
+  }
+  app.use(allowCrossDomain);
+} else {
+  const allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'example.com');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    //res.header('Access-Control-Allow-Headers', '*');
     res.header('content-type','text/html; charset=UTF-8');
     next();
   }

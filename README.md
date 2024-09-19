@@ -53,3 +53,23 @@ Not all sip requests are included as routes yet, but simple to be integrated whe
 It is possible to add a middleware in order to bundle certain sip2 requests in order to build complex responses e.g. return a patron account including all items. 
 
 An example called unidos is included and triggered via config.js. To enable it set `unidos : true`
+
+### Routes
+
+Returns a patron object withoud loading items, faster for overview purpose:
+
+`http://localhost:3000/unidos/patronAccount/simple/:patronIdentifier`
+
+Returns a patron with items in chunks of parts (for faster response on 100s of items):
+
+`http://localhost:3000/unidos/patronAccount/detailed/:patronIdentifier/:parts([0-9]{1,2})?`
+
+Returns a patron with defined itemtype items (NOT IMPLEMENTED YET):
+
+`http://localhost:3000/unidos/patronAccount/detailed/:patronIdentifier?itemType=:itemType`
+
+with itemType out of `["hold","overdue","charged","fine","recall","unavailable","fee"]`.
+
+Legacy renew:
+
+`http://localhost:3000/unidos/renew/:patronIdentifier/:itemIdentifier/:apiVersion?`

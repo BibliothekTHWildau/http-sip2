@@ -58,6 +58,7 @@ class Sip2Handler { //die main starten
         case "checkin"  :   temp = this.requestCheckin(request.itemIdentifier, request.noBlock, request.nbDueDate, request.highPriority); break;
 
         case "hold" :     temp = this.requestHold(request.patronId ,'+' ,2 ,request.itemIdentifier ,'' ,'' ,null, null, request.highPriority); break;
+        case "feepaid" : temp = this.requestFeePaid(request); break;
       }
 
       temp.then( responseString => {
@@ -80,14 +81,15 @@ class Sip2Handler { //die main starten
     return new Promise((resolve, reject) => {
 
       // Patron information request 
-      //hold: 0,
-      //overdue: 1,
-      //charged: 2,
-      //fine: 3,
-      //recall: 4,
-      //unavailable: 5,
-      //const type = 'charged';
-      const patronInformationRequest = new SIP2.PatronInformationRequest(type, 1, 2);
+      // type hold: 0,
+      // overdue: 1,
+      // charged: 2,
+      // fine: 3,
+      // recall: 4,
+      // unavailable: 5,
+      // fee: 6
+
+      const patronInformationRequest = new SIP2.PatronInformationRequest(type, 1, 10);
       //patronInformationRequest.sequence = 1;
       patronInformationRequest.institutionId = INSTITUTION;
       patronInformationRequest.patronIdentifier = patronId;
@@ -259,6 +261,30 @@ class Sip2Handler { //die main starten
         if (err)
           return reject();
         return resolve(ACStatusResponse);
+      });
+    })
+  }
+
+  requestFeePaid(req){
+    return new Promise((resolve, reject) => {
+
+      let feeType = req.feeType || "FT"; // "FEETYPE";
+      let paymentType = req.paymentType ||  "PT"; //"PAYMENTTYPE";
+      let currencyType =  "EUR"; // 3 char
+      let feeIdentifier = "AB";// accountlines "FEEID"; SIP2:CG
+      let transactionId = "TRANSACTIONID"; // SIP2:BK
+
+      // 3720240422    141805FTPTEURBV0,01|AOHSBWILDAU|AA20000066220|CGFEEID|BKTRANSACTIONID|AY0AZE8E5
+
+      const FeePaidRequest = new SIP2.FeePaidRequest(feeType, paymentType, currencyType, req.feeAmount, feeIdentifier, transactionId);
+      FeePaidRequest.patronIdentifier = req.patronId;
+      FeePaidRequest.institutionId = INSTITUTION;
+      //console.log(SCStatusRequest.getMessage())
+
+      this.sip2Connection.send(FeePaidRequest.getMessage(), function(err, FeePaidResponse) {
+        if (err)
+          return reject();
+        return resolve(FeePaidResponse);
       });
     })
   }

@@ -1,5 +1,6 @@
 /node_modules
 config.js
+tunnel.sh
 package-lock.json
 /logs
 /test

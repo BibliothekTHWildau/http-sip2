@@ -13,8 +13,8 @@ RestartSec=10
 # Restart service after 10 seconds if node service crashes
 #StandardOutput=file:/path/to/http-sip2/logs/http-sip2.log
 #StandardError=file:/path/to/http-sip2/logs/http-sip2-err.log
-StandardOutput=append:${APPFOLDER}/logs/http-sip2.log
-StandardError=append:${APPFOLDER}/logs/http-sip2-err.log
+StandardOutput=append:/path/must/be/absolute/and/no/env/logs/http-sip2.log
+StandardError=append:/path/must/be/absolute/and/no/env/logs/http-sip2-err.log
 User=jan
 Group=jan
 
