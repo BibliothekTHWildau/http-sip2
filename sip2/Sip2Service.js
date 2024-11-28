@@ -240,7 +240,8 @@ class Sip2Handler { //die main starten
     
     return new Promise((resolve, reject) => {
       // returnDate, location, itemIdentifier, itemProperties
-      const checkinRequest = new SIP2.CheckinRequest(null, "hsbwildau" ,itemIdentifier, null);
+      // todo AP current location
+      const checkinRequest = new SIP2.CheckinRequest(null, INSTITUTION ,itemIdentifier, null);
       checkinRequest.institutionId = INSTITUTION;
       console.log(checkinRequest.getMessage())
       this.sip2Connection.send(checkinRequest.getMessage(), (err, checkinResponse) => {

@@ -73,3 +73,24 @@ with itemType out of `["hold","overdue","charged","fine","recall","unavailable",
 Legacy renew:
 
 `http://localhost:3000/unidos/renew/:patronIdentifier/:itemIdentifier/:apiVersion?`
+
+# koha ktd
+
+To connect to a sip2 server in ktd from the outside port 6001 needs to be forwarded by ktd
+
+On ktd `/etc/koha/sites/kohadev/SIPconfig.xml` needs to be changed aswell, to listen to the public ip of the container.
+
+```xml
+<service
+       port="172.17.0.4:6001/tcp"
+       transport="RAW"
+       protocol="SIP/2.00"
+       client_timeout="600"
+       timeout="60" />
+```
+
+KTD uses a different terminator than http-sip2 so needs to be set to "CR":
+
+```xml
+<login id="term1"  password="term1" delimiter="|" error-detect="enabled" institution="CPL" encoding="ascii    " checked_in_ok="1" terminator="CR" />
+```

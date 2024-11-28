@@ -5,6 +5,7 @@ module.exports = {
     return /^\d{1,15}$/.test(patronId)
   },
   isItemId : function(itemId){
-    return /^[FDZ0-9]\d{7}[X0-9]$/.test(itemId);
+    return true;
+    //return /^[FDZ0-9]\d{7}[X0-9]$/.test(itemId);
   },
 }
